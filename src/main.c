@@ -40,7 +40,7 @@ void safe_scanf_complex(Complex* value) {
 
 void handle_double_vectors() {
     unsigned long temp_size;
-    printf("\nEnter vector size: ");
+    printf("\nEnter vector size(only positive): ");
     scanf("%lu", &temp_size);
     size_t vector_size = (size_t)temp_size;
 
@@ -104,7 +104,7 @@ void handle_double_vectors() {
 
 void handle_complex_vectors() {
     unsigned long temp_size;
-    printf("\nEnter vector size: ");
+    printf("\nEnter vector size(only positive): ");
     scanf("%lu", &temp_size);
     size_t vector_size = (size_t)temp_size;
 

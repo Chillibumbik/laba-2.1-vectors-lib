@@ -1,1 +1,6 @@
-# laba-2.1-vector-s-lib-
+# Vector Operations in C
+
+## Description
+This project implements dynamic vector operations in C, supporting both **real numbers (`double`)** and **complex numbers (`Complex`)**. It allows users to:
+- **Add vectors**
+- **Compute scalar products**
