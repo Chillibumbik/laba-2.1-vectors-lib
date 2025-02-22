@@ -50,3 +50,8 @@
 gcc -o bin/tests tests/tests.c src/vector.c -Iinclude -Wall -Wextra -Wpedantic -std=c11
 
 ./tests
+```
+или 
+```sh
+make test
+
