@@ -1,15 +1,16 @@
 #include <assert.h>
 #include <stdio.h>
 #include "vector.h"
+#include "more_tests.h"  // Подключаем заголовочный файл
 
-// Тест для пустого вектора в качестве входных данных
+// Определение тестов
 void test_empty_vectors() {
     Vector v1, v2, result;
     init_vector(&v1, 0, sizeof(double), REAL);
     init_vector(&v2, 0, sizeof(double), REAL);
 
     add_two_vectors(v1, v2, &result);
-    assert(result.size == 0);  // Результат должен быть пустым вектором
+    assert(result.size == 0);
 
     free_vector(&v1);
     free_vector(&v2);
@@ -17,7 +18,6 @@ void test_empty_vectors() {
     printf("Test passed: test_empty_vectors\n");
 }
 
-// Тест для вектора с нулевыми значениями
 void test_zero_elements_vector() {
     Vector v1, v2, result;
     init_vector(&v1, 3, sizeof(double), REAL);
@@ -30,7 +30,7 @@ void test_zero_elements_vector() {
     }
 
     add_two_vectors(v1, v2, &result);
-    assert(((double*)result.data)[0] == 0.0);  // Результат сложения должен быть равен 0 для всех элементов
+    assert(((double*)result.data)[0] == 0.0);
 
     free_vector(&v1);
     free_vector(&v2);

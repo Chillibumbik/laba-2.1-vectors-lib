@@ -31,6 +31,7 @@ void free_vector(Vector* v) {
 void add_two_vectors(Vector v1, Vector v2, Vector* result) {
     if (v1.size == 0 || v2.size == 0) {
         printf("Error: cannot add empty vectors.\n");
+        init_vector(result, 0, v1.element_size, v1.type_of_data);
         return;
     }
 
@@ -67,6 +68,7 @@ void add_two_vectors(Vector v1, Vector v2, Vector* result) {
     }
 }
 
+
 #include <stdio.h>
 
 double scalar_multiply_real(Vector v1, Vector v2) {
@@ -76,6 +78,7 @@ double scalar_multiply_real(Vector v1, Vector v2) {
     }
     return result;
 }
+
 
 Complex scalar_multiply_complex(Vector v1, Vector v2) {
     double real_part = 0.0;

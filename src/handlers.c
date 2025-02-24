@@ -48,8 +48,8 @@ void handle_double_vectors() {
         print_vector(result);
         free_vector(&result);
     } else if (choice == 2) {
-        double result = scalar_multiply_real(v1, v2);  // Получаем вещественный результат
-        printf("\nScalar product: %.2lf\n", result);  // Выводим вещественное число
+        double result = scalar_multiply_real(v1, v2);  
+        printf("\nScalar product: %.2lf\n", result);  
     } else if (choice == 3) {
         printf("Exiting program.\n");
         free_vector(&v1);
@@ -104,7 +104,7 @@ void handle_complex_vectors() {
         print_vector(result);
         free_vector(&result);
     } else if (choice == 2) {
-        Complex result = scalar_multiply_complex(v1, v2);  // Получаем комплексный результат
+        Complex result = scalar_multiply_complex(v1, v2);  
         printf("\nScalar product: ");
         print_complex(result);
         printf("\n");
