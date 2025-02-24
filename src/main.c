@@ -2,185 +2,167 @@
 #include <stdlib.h>
 #include "vector.h"
 
+void print_complex(Complex c) {
+    printf("%.2lf + %.2lfi", c.re, c.im);
+}
+
 void show_menu() {
-    printf("\nSelect an operation:\n");
-    printf("1 - Vector Addition\n");
-    printf("2 - Scalar Product\n");
+    printf("Choose operation:\n");
+    printf("1 - Add vectors\n");
+    printf("2 - Scalar product\n");
     printf("3 - Exit\n");
-    printf("Your choice: ");
 }
 
 void show_type_menu() {
-    printf("\nSelect data type:\n");
-    printf("1 - Real Numbers (double)\n");
-    printf("2 - Complex Numbers (Complex)\n");
-    printf("Your choice: ");
-}
-
-void safe_scanf_double(double* value) {
-    while (scanf("%lf", value) != 1) {
-        printf("Invalid input. Please enter a valid number: ");
-        while (getchar() != '\n'); 
-    }
-}
-
-void safe_scanf_int(int* value) {
-    while (scanf("%d", value) != 1 || *value <= 0) {
-        printf("Invalid input. Please enter a positive integer: ");
-        while (getchar() != '\n'); 
-    }
-}
-
-void safe_scanf_complex(Complex* value) {
-    while (scanf("%lf %lf", &value->re, &value->im) != 2) {
-        printf("Invalid input. Please enter two numbers separated by space (real imaginary): ");
-        while (getchar() != '\n'); 
-    }
+    printf("Choose data type:\n");
+    printf("1 - Real numbers (double)\n");
+    printf("2 - Complex numbers (Complex)\n");
 }
 
 void handle_double_vectors() {
-    unsigned long temp_size;
-    printf("\nEnter vector size(only positive): ");
-    scanf("%lu", &temp_size);
-    size_t vector_size = (size_t)temp_size;
+    size_t size;
+    printf("Enter the size of the vectors: ");
+    scanf("%llu", &size);  
 
-    Vector v1, v2, result;
-    init_vector(&v1, vector_size, sizeof(double));
-    init_vector(&v2, vector_size, sizeof(double));
+    Vector v1, v2;
+    init_vector(&v1, size, sizeof(double), REAL);
+    init_vector(&v2, size, sizeof(double), REAL);
 
-    printf("Enter elements of the first vector (double):\n");
-    for (size_t i = 0; i < vector_size; i++) {
-        double value;
-        printf("Element %lu: ", (unsigned long)(i + 1));
-        safe_scanf_double(&value);
-        push_data_in_vector(&v1, &value);
+    printf("Enter elements of the first vector:\n");
+    for (size_t i = 0; i < size; i++) {
+        double element;
+        printf("Element %llu: ", i + 1);  
+        scanf("%lf", &element);
+        push_data_in_vector(&v1, &element);
     }
 
-    printf("Enter elements of the second vector (double):\n");
-    for (size_t i = 0; i < vector_size; i++) {
-        double value;
-        printf("Element %lu: ", (unsigned long)(i + 1));
-        safe_scanf_double(&value);
-        push_data_in_vector(&v2, &value);
+    printf("Enter elements of the second vector:\n");
+    for (size_t i = 0; i < size; i++) {
+        double element;
+        printf("Element %llu: ", i + 1);  
+        scanf("%lf", &element);
+        push_data_in_vector(&v2, &element);
     }
 
-    int operation;
-    while (1) {
-        show_menu();
-        safe_scanf_int(&operation);
+    printf("\nFirst vector: ");
+    print_vector(v1);
+    printf("Second vector: ");
+    print_vector(v2);
+    printf("\n");
+
+    int choice;
+    show_menu();
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        Vector result;
+        add_two_vectors(v1, v2, &result);
+        printf("Result of addition:\n");
+        print_vector(result);
+        free_vector(&result);
+    } else if (choice == 2) {
+        double real_result = 0.0;
+        Complex complex_result;
+        scalar_multiply(v1, v2, &real_result, &complex_result);
         
-        if (operation == 1) {
-            printf("\nYour vectors:\n");
-            print_vector_real(v1);
-            print_vector_real(v2);
-
-            add__two_vectors(v1, v2, &result, GetDoubleFieldInfo()->add_func);
-            printf("Vector sum (double): ");
-            print_vector_real(result);
-            free_vector(&result);
-        } else if (operation == 2) {
-            printf("\nYour vectors:\n");
-            print_vector_real(v1);
-            print_vector_real(v2);
-
-            double scalar_result = 0.0;
-            for (size_t i = 0; i < v1.size; i++) {
-                scalar_result += GetDoubleFieldInfo()->scalar_multiply_func(
-                    (char*)v1.data + i * v1.element_size,
-                    (char*)v2.data + i * v2.element_size
-                );
-            }
-            printf("Scalar product (double): %.2lf\n", scalar_result);
-        } else if (operation == 3) {
-            break;
+        if (v1.type_of_data == REAL && v2.type_of_data == REAL) {
+            printf("Scalar product: %.2lf\n", real_result);  // Для вещественных векторов
         } else {
-            printf("Error: Invalid input. Please try again.\n");
+            printf("Scalar product: ");
+            print_complex(complex_result);  // Для комплексных векторов
+            printf("\n");
         }
+    } else if (choice == 3) {
+        printf("Exiting program.\n");
+        free_vector(&v1);
+        free_vector(&v2);
+        return;
     }
 
     free_vector(&v1);
     free_vector(&v2);
+    printf("\n");
 }
+
 
 void handle_complex_vectors() {
-    unsigned long temp_size;
-    printf("\nEnter vector size(only positive): ");
-    scanf("%lu", &temp_size);
-    size_t vector_size = (size_t)temp_size;
+    size_t size;
+    printf("Enter the size of the vectors: ");
+    scanf("%llu", &size);
 
-    Vector v1, v2, result;
-    init_vector(&v1, vector_size, sizeof(Complex));
-    init_vector(&v2, vector_size, sizeof(Complex));
+    Vector v1, v2;
+    init_vector(&v1, size, sizeof(Complex), COMPLEX);
+    init_vector(&v2, size, sizeof(Complex), COMPLEX);
 
-    printf("Enter elements of the first vector (Complex) (format: re im):\n");
-    for (size_t i = 0; i < vector_size; i++) {
-        Complex value;
-        while (getchar() != '\n');  
-        printf("Element %lu: ", (unsigned long)(i + 1));
-        safe_scanf_complex(&value);
-        push_data_in_vector(&v1, &value);
+    printf("Enter elements of the first vector (real and imaginary parts):\n");
+    for (size_t i = 0; i < size; i++) {
+        Complex element;
+        printf("Element %llu (real imaginary): ", i + 1);  
+        scanf("%lf %lf", &element.re, &element.im);
+        push_data_in_vector(&v1, &element);
     }
 
-    printf("\nEnter elements of the second vector (Complex) (format: re im):\n");
-    for (size_t i = 0; i < vector_size; i++) {
-        Complex value;
-        while (getchar() != '\n');  
-        printf("Element %lu: ", (unsigned long)(i + 1));
-        safe_scanf_complex(&value);
-        push_data_in_vector(&v2, &value);
+    printf("Enter elements of the second vector (real and imaginary parts):\n");
+    for (size_t i = 0; i < size; i++) {
+        Complex element;
+        printf("Element %llu (real imaginary): ", i + 1); 
+        scanf("%lf %lf", &element.re, &element.im);
+        push_data_in_vector(&v2, &element);
     }
 
-    int operation;
-    while (1) {
-        show_menu();
-        safe_scanf_int(&operation);
+    printf("\nFirst vector: ");
+    print_vector(v1);
+    printf("Second vector: ");
+    print_vector(v2);
+    printf("\n");
+
+    int choice;
+    show_menu();
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        Vector result;
+        add_two_vectors(v1, v2, &result);
+        printf("Result of addition:\n");
+        print_vector(result);
+        free_vector(&result);
+    } else if (choice == 2) {
+        double real_result = 0.0;
+        Complex complex_result;
+        scalar_multiply(v1, v2, &real_result, &complex_result);
         
-        if (operation == 1) {
-            printf("\nYour vectors:\n");
-            print_vector_complex(v1);
-            print_vector_complex(v2);
-
-            add__two_vectors(v1, v2, &result, GetComplexFieldInfo()->add_func);
-            printf("Vector sum (Complex): ");
-            print_vector_complex(result);
-            free_vector(&result);
-        } else if (operation == 2) {
-            printf("\nYour vectors:\n");
-            print_vector_complex(v1);
-            print_vector_complex(v2);
-
-            double scalar_result = 0.0;
-            for (size_t i = 0; i < v1.size; i++) {
-                scalar_result += GetComplexFieldInfo()->scalar_multiply_func(
-                    (char*)v1.data + i * v1.element_size,
-                    (char*)v2.data + i * v2.element_size
-                );
-            }
-            printf("Scalar product (Complex): %.2lf\n", scalar_result);
-        } else if (operation == 3) {
-            break;
+        if (v1.type_of_data == REAL && v2.type_of_data == REAL) {
+            printf("Scalar product: %.2lf\n", real_result);
         } else {
-            printf("Error: Invalid input. Please try again.\n");
+            printf("Scalar product: ");
+            print_complex(complex_result);
+            printf("\n");
         }
+    } else if (choice == 3) {
+        printf("Exiting program.\n");
+        free_vector(&v1);
+        free_vector(&v2);
+        return;
     }
 
     free_vector(&v1);
     free_vector(&v2);
+    printf("\n");
 }
 
-int main() {
-    int choice;
-    
-    while (1) {
-        show_type_menu();
-        safe_scanf_int(&choice);
 
-        if (choice == 1) {
+int main() {
+    while (1) {
+        int data_type;
+        show_type_menu();
+        scanf("%d", &data_type);
+
+        if (data_type == 1) {
             handle_double_vectors();
-        } else if (choice == 2) {
+        } else if (data_type == 2) {
             handle_complex_vectors();
         } else {
-            printf("Error: Invalid input. Please try again.\n");
+            printf("Invalid choice. Please try again.\n");
         }
     }
 
