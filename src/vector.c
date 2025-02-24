@@ -67,28 +67,32 @@ void add_two_vectors(Vector v1, Vector v2, Vector* result) {
     }
 }
 
-void scalar_multiply(Vector v1, Vector v2, double* real_result, Complex* complex_result) {
-    if (v1.type_of_data == REAL && v2.type_of_data == REAL) {
-        *real_result = 0.0;
-        for (size_t i = 0; i < v1.size; i++) {
-            *real_result += *(double*)((char*)v1.data + i * v1.element_size) * *(double*)((char*)v2.data + i * v2.element_size);
-        }
-    } else if (v1.type_of_data == COMPLEX && v2.type_of_data == COMPLEX) {
-        double real_part = 0.0;
-        double imag_part = 0.0;
+#include <stdio.h>
 
-        for (size_t i = 0; i < v1.size; i++) {
-            Complex* cv1 = (Complex*)((char*)v1.data + i * v1.element_size);
-            Complex* cv2 = (Complex*)((char*)v2.data + i * v2.element_size);
-
-            real_part += cv1->re * cv2->re - cv1->im * cv2->im;
-            imag_part += cv1->re * cv2->im + cv1->im * cv2->re;
-        }
-
-        complex_result->re = real_part;
-        complex_result->im = imag_part;
+double scalar_multiply_real(Vector v1, Vector v2) {
+    double result = 0.0;
+    for (size_t i = 0; i < v1.size; i++) {
+        result += *(double*)((char*)v1.data + i * v1.element_size) * *(double*)((char*)v2.data + i * v2.element_size);
     }
+    return result;
 }
+
+Complex scalar_multiply_complex(Vector v1, Vector v2) {
+    double real_part = 0.0;
+    double imag_part = 0.0;
+
+    for (size_t i = 0; i < v1.size; i++) {
+        Complex* cv1 = (Complex*)((char*)v1.data + i * v1.element_size);
+        Complex* cv2 = (Complex*)((char*)v2.data + i * v2.element_size);
+
+        real_part += cv1->re * cv2->re - cv1->im * cv2->im;
+        imag_part += cv1->re * cv2->im + cv1->im * cv2->re;
+    }
+
+    Complex result = {real_part, imag_part};
+    return result;
+}
+
 
 void print_vector(Vector v) {
     printf("( ");
