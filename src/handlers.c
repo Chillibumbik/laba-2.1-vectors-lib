@@ -7,9 +7,20 @@ void print_complex(Complex c) {
 }
 
 void handle_double_vectors() {
+    int input_size;
     size_t size;
-    printf("Enter the size of the vectors: ");
-    scanf("%llu", &size);  
+    int valid_input = 0;
+
+    while (!valid_input) {
+        printf("Enter the size of the vectors: ");
+        if (scanf("%llu", &input_size) != 1 || size <= 0) {
+            printf("Invalid input. Please enter a positive integer.\n");
+            while (getchar() != '\n');
+        } else {
+            size = (size_t*)input_size;
+            valid_input = 1;
+        }
+    }
 
     Vector v1, v2;
     init_vector(&v1, size, sizeof(double), REAL);
@@ -18,16 +29,24 @@ void handle_double_vectors() {
     printf("Enter elements of the first vector:\n");
     for (size_t i = 0; i < size; i++) {
         double element;
-        printf("Element %llu: ", i + 1);  
-        scanf("%lf", &element);
+        printf("Element %llu: ", i + 1);
+        while (scanf("%lf", &element) != 1) {
+            printf("Invalid input. Please enter a valid number.\n");
+            while (getchar() != '\n'); // Очищаем буфер ввода
+            printf("Element %llu: ", i + 1);
+        }
         push_data_in_vector(&v1, &element);
     }
 
     printf("Enter elements of the second vector:\n");
     for (size_t i = 0; i < size; i++) {
         double element;
-        printf("Element %llu: ", i + 1);  
-        scanf("%lf", &element);
+        printf("Element %llu: ", i + 1);
+        while (scanf("%lf", &element) != 1) {
+            printf("Invalid input. Please enter a valid number.\n");
+            while (getchar() != '\n');
+            printf("Element %llu: ", i + 1);
+        }
         push_data_in_vector(&v2, &element);
     }
 
@@ -39,7 +58,11 @@ void handle_double_vectors() {
 
     int choice;
     show_menu();
-    scanf("%d", &choice);
+    while (scanf("%d", &choice) != 1 || (choice < 1 || choice > 3)) {
+        printf("Invalid choice. Please enter a number between 1 and 3.\n");
+        while (getchar() != '\n');
+        show_menu();
+    }
 
     if (choice == 1) {
         Vector result;
@@ -48,8 +71,8 @@ void handle_double_vectors() {
         print_vector(result);
         free_vector(&result);
     } else if (choice == 2) {
-        double result = scalar_multiply_real(v1, v2);  
-        printf("\nScalar product: %.2lf\n", result);  
+        double result = scalar_multiply_real(v1, v2);
+        printf("\nScalar product: %.2lf\n", result);
     } else if (choice == 3) {
         printf("Exiting program.\n");
         free_vector(&v1);
@@ -62,10 +85,23 @@ void handle_double_vectors() {
     printf("\n");
 }
 
+
 void handle_complex_vectors() {
+    int size_input;
     size_t size;
-    printf("Enter the size of the vectors: ");
-    scanf("%llu", &size);
+    int valid_input = 0;
+
+    while (!valid_input) {
+        printf("Enter the size of the vectors: ");
+        
+        if (scanf("%d", &size_input) != 1 || size_input <= 0) {
+            printf("Invalid input. Please enter a positive integer.\n");
+            while (getchar() != '\n');
+        } else {
+            size = (size_t)size_input; 
+            valid_input = 1; 
+        }
+    }
 
     Vector v1, v2;
     init_vector(&v1, size, sizeof(Complex), COMPLEX);
@@ -74,16 +110,24 @@ void handle_complex_vectors() {
     printf("Enter elements of the first vector (real and imaginary parts):\n");
     for (size_t i = 0; i < size; i++) {
         Complex element;
-        printf("Element %llu (real imaginary): ", i + 1);  
-        scanf("%lf %lf", &element.re, &element.im);
+        printf("Element %llu (real imaginary): ", i + 1);
+        while (scanf("%lf %lf", &element.re, &element.im) != 2) {
+            printf("Invalid input. Please enter two valid numbers.\n");
+            while (getchar() != '\n');
+            printf("Element %llu (real imaginary): ", i + 1);
+        }
         push_data_in_vector(&v1, &element);
     }
 
     printf("Enter elements of the second vector (real and imaginary parts):\n");
     for (size_t i = 0; i < size; i++) {
         Complex element;
-        printf("Element %llu (real imaginary): ", i + 1); 
-        scanf("%lf %lf", &element.re, &element.im);
+        printf("Element %llu (real imaginary): ", i + 1);
+        while (scanf("%lf %lf", &element.re, &element.im) != 2) {
+            printf("Invalid input. Please enter two valid numbers.\n");
+            while (getchar() != '\n');
+            printf("Element %llu (real imaginary): ", i + 1);
+        }
         push_data_in_vector(&v2, &element);
     }
 
@@ -95,7 +139,11 @@ void handle_complex_vectors() {
 
     int choice;
     show_menu();
-    scanf("%d", &choice);
+    while (scanf("%d", &choice) != 1 || (choice < 1 || choice > 3)) {
+        printf("Invalid choice. Please enter a number between 1 and 3.\n");
+        while (getchar() != '\n');
+        show_menu();
+    }
 
     if (choice == 1) {
         Vector result;
@@ -104,7 +152,7 @@ void handle_complex_vectors() {
         print_vector(result);
         free_vector(&result);
     } else if (choice == 2) {
-        Complex result = scalar_multiply_complex(v1, v2);  
+        Complex result = scalar_multiply_complex(v1, v2);
         printf("\nScalar product: ");
         print_complex(result);
         printf("\n");
