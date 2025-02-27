@@ -28,7 +28,7 @@ void free_vector(Vector* v) {
     free(v->data);
 }
 
-void add_two_vectors(Vector v1, Vector v2, Vector* result) {
+void add_two_vectors(const Vector v1, const Vector v2, Vector* result) { //константы так прописать, где надо
     if (v1.size == 0 || v2.size == 0) {
         printf("Error: cannot add empty vectors.\n");
         init_vector(result, 0, v1.element_size, v1.type_of_data);
@@ -69,7 +69,6 @@ void add_two_vectors(Vector v1, Vector v2, Vector* result) {
 }
 
 
-#include <stdio.h>
 
 double scalar_multiply_real(Vector v1, Vector v2) {
     double result = 0.0;

@@ -13,11 +13,11 @@ void handle_double_vectors() {
 
     while (!valid_input) {
         printf("Enter the size of the vectors: ");
-        if (scanf("%llu", &input_size) != 1 || size <= 0) {
+        if (scanf("%d", &input_size) != 1 || input_size <= 0) {
             printf("Invalid input. Please enter a positive integer.\n");
             while (getchar() != '\n');
         } else {
-            size = (size_t*)input_size;
+            size = (size_t)input_size;
             valid_input = 1;
         }
     }
@@ -32,7 +32,7 @@ void handle_double_vectors() {
         printf("Element %llu: ", i + 1);
         while (scanf("%lf", &element) != 1) {
             printf("Invalid input. Please enter a valid number.\n");
-            while (getchar() != '\n'); // Очищаем буфер ввода
+            while (getchar() != '\n'); 
             printf("Element %llu: ", i + 1);
         }
         push_data_in_vector(&v1, &element);
@@ -87,18 +87,18 @@ void handle_double_vectors() {
 
 
 void handle_complex_vectors() {
-    int size_input;
+    int input_size;
     size_t size;
     int valid_input = 0;
 
     while (!valid_input) {
         printf("Enter the size of the vectors: ");
         
-        if (scanf("%d", &size_input) != 1 || size_input <= 0) {
+        if (scanf("%d", &input_size) != 1 || input_size <= 0) {
             printf("Invalid input. Please enter a positive integer.\n");
             while (getchar() != '\n');
         } else {
-            size = (size_t)size_input; 
+            size = (size_t)input_size; 
             valid_input = 1; 
         }
     }

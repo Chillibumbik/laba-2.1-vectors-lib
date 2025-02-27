@@ -1,9 +1,8 @@
 #include <assert.h>
 #include <stdio.h>
 #include "vector.h"
-#include "more_tests.h"  // Подключаем заголовочный файл
+#include "more_tests.h"  
 
-// Определение тестов
 void test_empty_vectors() {
     Vector v1, v2, result;
     init_vector(&v1, 0, sizeof(double), REAL);

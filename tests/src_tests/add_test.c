@@ -4,7 +4,7 @@
 #include "add_test.h"  
 
 
-void test_add_real_vectors() {
+void test_add_real_vectors() { // ВСЕ ТЕСТЫ В ОДИН ФАЙЛ
     Vector v1, v2, result;
     double data1[] = {1.0, 2.0, 3.0};
     double data2[] = {4.0, 5.0, 6.0};
@@ -24,7 +24,7 @@ void test_add_real_vectors() {
     free_vector(&v1);
     free_vector(&v2);
     free_vector(&result);
-    printf("Test passed: test_add_real_vectors\n");
+    printf("Test passed: test_add_real_vectors\n"); // все принты в отдлеьный интерфейс файл
 }
 
 void test_add_empty_vectors() {

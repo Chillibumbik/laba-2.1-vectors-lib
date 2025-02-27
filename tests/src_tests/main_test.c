@@ -5,7 +5,7 @@
 
 int main() {
 
-    test_add_real_vectors();
+    test_add_real_vectors(); // все функции в отдлеьную
     test_add_empty_vectors();
     test_add_incompatible_vectors();
 
