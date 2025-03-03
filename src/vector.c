@@ -2,111 +2,71 @@
 #include <stdlib.h>
 #include <string.h>
 #include "vector.h"
+#include "VectorErrors.h"
 
-void init_vector(Vector* v, size_t capacity, size_t element_size, DataType type_of_data) {
-    v->data = malloc(capacity * element_size);
-    v->capacity = capacity;
-    v->element_size = element_size;
-    v->type_of_data = type_of_data;
-    v->size = 0;
-}
-
-void push_data_in_vector(Vector* v, void* element) {
-    if (v->size == v->capacity) {
-        v->capacity *= 2;
-        v->data = realloc(v->data, v->capacity * v->element_size);
-        if (v->data == NULL) {
-            printf("Memory allocation failed.\n");
-            return;
-        }
+Vector* createVector(TypeInfo* typeInfo, void **data, size_t capacity, VectorErrors* operationResult){
+    Vector* vector = (Vector*)malloc(sizeof(Vector));
+    if (vector == NULL) {
+        *operationResult = MEMORY_ALLOCATION_FAILED;
+        return NULL;
     }
-    memcpy((char*)v->data + v->size * v->element_size, element, v->element_size);
-    v->size++;
+
+    vector->typeInfo = typeInfo;
+    vector->capacity = capacity;
+    vector->data = malloc(typeInfo->size * vector->capacity);
+    if (vector->data == NULL) {
+        *operationResult = MEMORY_ALLOCATION_FAILED;
+        free(vector);
+        return NULL;
+    }
+    
+    for(size_t i=0; i<vector->capacity; i++){
+        memcpy(vector->data[i], data[i], typeInfo->size);
+        }
+    *operationResult = VECTOR_OPERATION_OK;
+    return vector;
 }
+
 
 void free_vector(Vector* v) {
     free(v->data);
+
 }
 
-void add_two_vectors(const Vector v1, const Vector v2, Vector* result) { //константы так прописать, где надо
-    if (v1.size == 0 || v2.size == 0) {
-        printf("Error: cannot add empty vectors.\n");
-        init_vector(result, 0, v1.element_size, v1.type_of_data);
-        return;
+VectorErrors add_vectors(const Vector* v1, const Vector* v2, Vector* result) {
+    if (v1 == NULL || v2 == NULL || result == NULL) return VECTOR_NOT_DEFINED;
+    if (v1->typeInfo->add == NULL) return OPERATION_NOT_DEFINED;
+    
+    for(size_t i=0; i<v1->capacity; i++){
+        v1->typeInfo->add(v1->data[i], v2->data[i], result->data[i]);
     }
 
-    init_vector(result, v1.size, v1.element_size, v1.type_of_data);
-
-    if (v1.type_of_data == REAL && v2.type_of_data == REAL) {
-        for (size_t i = 0; i < v1.size; i++) {
-            double* res_elem = (double*)malloc(v1.element_size);
-            if (res_elem == NULL) {
-                printf("Memory allocation failed.\n");
-                return;
-            }
-
-            *res_elem = *(double*)((char*)v1.data + i * v1.element_size) + *(double*)((char*)v2.data + i * v2.element_size);
-            push_data_in_vector(result, res_elem);
-            free(res_elem);
-        }
-    } else if (v1.type_of_data == COMPLEX && v2.type_of_data == COMPLEX) {
-        for (size_t i = 0; i < v1.size; i++) {
-            Complex* res_elem = (Complex*)malloc(v1.element_size);
-            if (res_elem == NULL) {
-                printf("Memory allocation failed.\n");
-                return;
-            }
-
-            Complex* cv1 = (Complex*)((char*)v1.data + i * v1.element_size);
-            Complex* cv2 = (Complex*)((char*)v2.data + i * v2.element_size);
-            res_elem->im = cv1->im + cv2->im;
-            res_elem->re = cv1->re + cv2->re;
-
-            push_data_in_vector(result, res_elem);
-            free(res_elem);
-        }
-    }
+    return VECTOR_OPERATION_OK;
 }
 
 
 
-double scalar_multiply_real(Vector v1, Vector v2) {
-    double result = 0.0;
-    for (size_t i = 0; i < v1.size; i++) {
-        result += *(double*)((char*)v1.data + i * v1.element_size) * *(double*)((char*)v2.data + i * v2.element_size);
-    }
-    return result;
+VectorErrors multiply_vectors(const Vector* v1, const Vector* v2, void* result){
+    if (v1 == NULL || v2 == NULL || result == NULL) return VECTOR_NOT_DEFINED;
+    if (v1->typeInfo->multiply == NULL) return OPERATION_NOT_DEFINED;
+    for(size_t i=0; i<v1->capacity; i++){
+        v1->typeInfo->multiply(v1->data[i], v2->data[i], result);
+    }   
+    return VECTOR_OPERATION_OK;
 }
 
 
-Complex scalar_multiply_complex(Vector v1, Vector v2) {
-    double real_part = 0.0;
-    double imag_part = 0.0;
-
-    for (size_t i = 0; i < v1.size; i++) {
-        Complex* cv1 = (Complex*)((char*)v1.data + i * v1.element_size);
-        Complex* cv2 = (Complex*)((char*)v2.data + i * v2.element_size);
-
-        real_part += cv1->re * cv2->re - cv1->im * cv2->im;
-        imag_part += cv1->re * cv2->im + cv1->im * cv2->re;
-    }
-
-    Complex result = {real_part, imag_part};
-    return result;
-}
-
-
-void print_vector(Vector v) {
-    printf("( ");
-    if (v.type_of_data == REAL) {
-        for (size_t i = 0; i < v.size; i++) {
-            printf("%.2lf ", ((double*)v.data)[i]);
-        }
-    } else if (v.type_of_data == COMPLEX) {
-        for (size_t i = 0; i < v.size; i++) {
-            Complex* c = &((Complex*)v.data)[i];
-            printf("%.2lf + %.2lfi ", c->re, c->im);
+VectorErrors print_vector(const Vector* vector) {
+    if (vector == NULL) return VECTOR_NOT_DEFINED;
+    if (vector->typeInfo->print == NULL) return OPERATION_NOT_DEFINED;
+    printf("Vector: ("); 
+    for(size_t i=0; i<vector->capacity; i++){
+        if(i<(vector->capacity-1)){
+            vector->typeInfo->print(vector->data[i]);
+            printf(", "); 
+        } else{
+            vector->typeInfo->print(vector->data[i]);
+            printf(")\n");
         }
     }
-    printf(")\n");
 }

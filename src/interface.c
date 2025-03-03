@@ -1,15 +1,16 @@
 #include <stdio.h>
 #include "interface.h"
+#include "handler.h"
 
-void show_menu() {
-    printf("Choose operation:\n");
-    printf("1 - Add vectors\n");
-    printf("2 - Scalar product\n");
-    printf("3 - Exit\n");
-}
+void startInterface() {
+    int dataType;
 
-void show_type_menu() {
-    printf("Choose data type:\n");
-    printf("1 - Real numbers (double)\n");
-    printf("2 - Complex numbers (Complex)\n");
+    printf("Select data type:\n");
+    printf("1 - Double\n2 - Complex\n3 - Integer\n");
+    while (scanf("%d", &dataType) != 1 || dataType < 1 || dataType > 3) {
+        printf("Invalid input. Please select a valid option (1, 2, 3): ");
+        while(getchar() != '\n');
+    }
+
+    handleVectorOperations(dataType);
 }

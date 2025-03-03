@@ -2,36 +2,24 @@
 #define VECTOR_H
 
 #include <stddef.h>
-
-
-typedef enum {
-    REAL,
-    COMPLEX 
-} DataType;
-
+#include "TypeInfo.h"
+#include "Integer.h"
+#include "Double.h"
+#include "Complex.h"
+#include "VectorErrors.h"
 
 typedef struct {
-    double re;
-    double im;
-} Complex;  //комплекс и операции с ним в отдельном файле 
-
-typedef struct {
-    void* data;
-    DataType type_of_data;   // надо делать через field info должны быть дабл, инт, комплекс
-    size_t element_size;
-    size_t size;
-    size_t capacity; // убрать емкость и в функциях тоже
+    void **data;
+    TypeInfo* typeInfo;   
+    size_t capacity;
 } Vector;
 
 
-void init_vector(Vector* v, size_t capacity, size_t element_size, DataType type_of_data);
-void push_data_in_vector(Vector* v, void* element);
+Vector* createVector(TypeInfo* typeInfo, void **data, size_t capacity, VectorErrors* operationResult);
 void free_vector(Vector* v);
+VectorErrors add_vectors(const Vector* v1, const Vector* v2, Vector* result);
+VectorErrors multiply_vectors(const Vector* v1, const Vector* v2, void* result);
+VectorErrors print_vector(const Vector* v);
 
-void add_two_vectors(Vector v1, Vector v2, Vector* result);
 
-void print_vector(Vector v);
-
-double scalar_multiply_real(Vector v1, Vector v2);   // надо указатель на функции в структуре
-Complex scalar_multiply_complex(Vector v1, Vector v2);
 #endif
