@@ -40,7 +40,7 @@ void handleVectorOperations(int dataType) {
 
     printf("\nEnter elements of the first vector:\n");
     for (size_t i = 0; i < vectorSize; i++) {
-        printf("Element %llu: ", i + 1);
+        printf("Element %llu (for complex - {real imag}): ", i + 1);
         if (dataType == 2) { // Complex number
             double real, imag;
             while (scanf("%lf %lf", &real, &imag) != 2) {
@@ -64,7 +64,7 @@ void handleVectorOperations(int dataType) {
 
     printf("\nEnter elements of the second vector:\n");
     for (size_t i = 0; i < vectorSize; i++) {
-        printf("Element %llu: ", i + 1);
+        printf("Element %llu (for complex - {real imag}): ", i + 1);
         if (dataType == 2) { // Complex number
             double real, imag;
             while (scanf("%lf %lf", &real, &imag) != 2) {

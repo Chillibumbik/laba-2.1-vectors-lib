@@ -54,37 +54,16 @@ VectorErrors multiply_vectors(const Vector* v1, const Vector* v2, void* result) 
     if (v1 == NULL || v2 == NULL || result == NULL) return VECTOR_NOT_DEFINED;
     if (v1->typeInfo->multiply == NULL) return OPERATION_NOT_DEFINED;
 
-    // Для комплексных чисел результат скалярного произведения - комплексное число
-    if (v1->typeInfo->size == sizeof(Complex)) {
-        Complex* scalarResult = (Complex*)result;
-        scalarResult->real = 0;  // Инициализируем как 0
-        scalarResult->imag = 0;
-
-        for (size_t i = 0; i < v1->capacity; i++) {
-            Complex* c1 = (Complex*)((char*)v1->data + i * v1->typeInfo->size);
-            Complex* c2 = (Complex*)((char*)v2->data + i * v2->typeInfo->size);
-            v1->typeInfo->multiply(c1, c2, scalarResult);  // Используем multiply для комплексных чисел
-        }
-    }
-    else {  // Для других типов (например, double, int)
-        double* scalarResult = (double*)result;
-        *scalarResult = 0;
-        for (size_t i = 0; i < v1->capacity; i++) {
-            if (v1->typeInfo->size == sizeof(double)) {
-                double* val1 = (double*)((char*)v1->data + i * v1->typeInfo->size);
-                double* val2 = (double*)((char*)v2->data + i * v2->typeInfo->size);
-                *scalarResult += (*val1) * (*val2);
-            }
-            else if (v1->typeInfo->size == sizeof(int)) {
-                int* val1 = (int*)((char*)v1->data + i * v1->typeInfo->size);
-                int* val2 = (int*)((char*)v2->data + i * v2->typeInfo->size);
-                *scalarResult += (*val1) * (*val2);
-            }
-        }
+    // Для всех типов данных скалярное произведение теперь выполняется через scalarMultiply
+    for (size_t i = 0; i < v1->capacity; i++) {
+        void* val1 = (char*)v1->data + i * v1->typeInfo->size;
+        void* val2 = (char*)v2->data + i * v2->typeInfo->size;
+        v1->typeInfo->multiply(val1, val2, result);  // Вызов функции скалярного произведения из typeInfo
     }
 
     return VECTOR_OPERATION_OK;
 }
+
 
 
 VectorErrors print_vector(const Vector* vector) {

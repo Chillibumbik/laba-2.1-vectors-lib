@@ -11,7 +11,7 @@ void complexAdd(const void* arg1, const void* arg2, void* result) {
     res->imag = c1->imag + c2->imag;
 }
 
-void complexScalarMultiply(const void* arg1, const void* arg2, void* result) {
+void complexMultiply(const void* arg1, const void* arg2, void* result) {
     Complex* c1 = (Complex*)arg1;
     Complex* c2 = (Complex*)arg2;
     Complex* scalarResult = (Complex*)result;

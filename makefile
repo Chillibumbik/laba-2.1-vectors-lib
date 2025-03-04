@@ -5,11 +5,11 @@ SRC_DIR = src
 INC_DIR = include
 BIN_DIR = bin
 
-# Папки для исходных и объектных файлов
+
 OBJ_DIR = bin
 INCLUDE_DIR = include
 
-# Исходные файлы
+
 SRC_FILES = $(SRC_DIR)/Complex.c $(SRC_DIR)/Double.c $(SRC_DIR)/Integer.c $(SRC_DIR)/handler.c $(SRC_DIR)/interface.c $(SRC_DIR)/main.c $(SRC_DIR)/vector.c
 OBJ_FILES = $(SRC_FILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
