@@ -10,7 +10,6 @@
 void handleVectorOperations(int dataType) {
     TypeInfo* typeInfo = NULL;
     
-    // Устанавливаем typeInfo в зависимости от выбранного типа данных
     if (dataType == 1) {
         typeInfo = GetDoubleTypeInfo();
     } else if (dataType == 2) {
@@ -22,80 +21,96 @@ void handleVectorOperations(int dataType) {
         return;
     }
 
-    unsigned long long vectorSize;
+    size_t vectorSize;
     printf("Enter the size of the vectors: ");
-    while (scanf("%llu", &vectorSize) != 1 || vectorSize <= 0) {
+    while (scanf("%llu", &vectorSize) != 1 || vectorSize == 0) {
         printf("Invalid size. Please enter a positive integer: ");
-        while(getchar() != '\n'); // Очистка буфера
+        while(getchar() != '\n');
     }
 
-    // Выделяем память для векторов
-    void* vector1 = malloc(typeInfo->size * vectorSize);
-    void* vector2 = malloc(typeInfo->size * vectorSize);
+    VectorErrors opResult;
+    Vector* vector1 = createVector(typeInfo, NULL, vectorSize, &opResult);
+    Vector* vector2 = createVector(typeInfo, NULL, vectorSize, &opResult);
+    Vector* result = createVector(typeInfo, NULL, vectorSize, &opResult);
 
-    // Ввод данных для первого вектора
-    printf("Enter elements of the first vector:\n");
-    for (unsigned long long i = 0; i < vectorSize; i++) {
+    if (!vector1 || !vector2 || !result) {
+        printf("Memory allocation failed.\n");
+        return;
+    }
+
+    printf("\nEnter elements of the first vector:\n");
+    for (size_t i = 0; i < vectorSize; i++) {
         printf("Element %llu: ", i + 1);
-        while (scanf("%lf", (char*)vector1 + i * typeInfo->size) != 1) {
-            printf("Invalid input. Try again: ");
-            while(getchar() != '\n');  // Очистка буфера
+        if (dataType == 2) { // Complex number
+            double real, imag;
+            while (scanf("%lf %lf", &real, &imag) != 2) {
+                printf("Invalid input. Please enter both real and imaginary parts (real imag): ");
+                while(getchar() != '\n');
+            }
+            Complex c = {real, imag};
+            memcpy((char*)vector1->data + i * typeInfo->size, &c, typeInfo->size);
+        } else if (dataType == 1) { // Double
+            while (scanf("%lf", (double*)((char*)vector1->data + i * typeInfo->size)) != 1) {
+                printf("Invalid input. Try again: ");
+                while(getchar() != '\n');
+            }
+        } else if (dataType == 3) { // Integer
+            while (scanf("%d", (int*)((char*)vector1->data + i * typeInfo->size)) != 1) {
+                printf("Invalid input. Try again: ");
+                while(getchar() != '\n');
+            }
         }
     }
 
-    // Ввод данных для второго вектора
-    printf("Enter elements of the second vector:\n");
-    for (unsigned long long i = 0; i < vectorSize; i++) {
+    printf("\nEnter elements of the second vector:\n");
+    for (size_t i = 0; i < vectorSize; i++) {
         printf("Element %llu: ", i + 1);
-        while (scanf("%lf", (char*)vector2 + i * typeInfo->size) != 1) {
-            printf("Invalid input. Try again: ");
-            while(getchar() != '\n');  // Очистка буфера
+        if (dataType == 2) { // Complex number
+            double real, imag;
+            while (scanf("%lf %lf", &real, &imag) != 2) {
+                printf("Invalid input. Please enter both real and imaginary parts (real imag): ");
+                while(getchar() != '\n');
+            }
+            Complex c = {real, imag};
+            memcpy((char*)vector2->data + i * typeInfo->size, &c, typeInfo->size);
+        } else if (dataType == 1) { // Double
+            while (scanf("%lf", (double*)((char*)vector2->data + i * typeInfo->size)) != 1) {
+                printf("Invalid input. Try again: ");
+                while(getchar() != '\n');
+            }
+        } else if (dataType == 3) { // Integer
+            while (scanf("%d", (int*)((char*)vector2->data + i * typeInfo->size)) != 1) {
+                printf("Invalid input. Try again: ");
+                while(getchar() != '\n');
+            }
         }
     }
 
-    // Вывод данных векторов
-    printf("First vector:\n");
-    for (unsigned long long i = 0; i < vectorSize; i++) {
-        typeInfo->print((char*)vector1 + i * typeInfo->size);
-        printf(" ");
-    }
-    printf("\n");
+    // Вывод векторов для проверки
+    printf("\nFirst vector:\n");
+    print_vector(vector1);
 
-    printf("Second vector:\n");
-    for (unsigned long long i = 0; i < vectorSize; i++) {
-        typeInfo->print((char*)vector2 + i * typeInfo->size);
-        printf(" ");
-    }
-    printf("\n");
+    printf("\nSecond vector:\n");
+    print_vector(vector2);
 
-    // Выбор операции
     int operation;
-    printf("Select operation: 1 - Add, 2 - Scalar Product, 3 - Exit: ");
+    printf("\nSelect operation: 1 - Add, 2 - Scalar Product, 3 - Exit: ");
     while (scanf("%d", &operation) != 1 || operation < 1 || operation > 3) {
         printf("Invalid choice. Try again: ");
         while(getchar() != '\n');
     }
 
-    // Выполнение выбранной операции
     if (operation == 1) {
-        // Сложение векторов
-        void* result = malloc(typeInfo->size * vectorSize);
         add_vectors(vector1, vector2, result);
         printf("Result of addition:\n");
-        for (unsigned long long i = 0; i < vectorSize; i++) {
-            typeInfo->print((char*)result + i * typeInfo->size);
-            printf(" ");
-        }
-        printf("\n");
-        free(result);
+        print_vector(result);
     } else if (operation == 2) {
-        // Скалярное произведение
-        double result = 0;
-        multiply_vectors(vector1, vector2, &result);
-        printf("Scalar product: %lf\n", result);
+        double scalarResult = 0;
+        multiply_vectors(vector1, vector2, &scalarResult);
+        printf("Scalar product: %lf\n", scalarResult);
     }
 
-    // Освобождение памяти
-    free(vector1);
-    free(vector2);
+    free_vector(vector1);
+    free_vector(vector2);
+    free_vector(result);
 }

@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "Complex.h"
 
-
 void complexAdd(const void* arg1, const void* arg2, void* result) {
     Complex* c1 = (Complex*)arg1;
     Complex* c2 = (Complex*)arg2;
@@ -12,14 +11,15 @@ void complexAdd(const void* arg1, const void* arg2, void* result) {
     res->imag = c1->imag + c2->imag;
 }
 
-void complexMultiply(const void* arg1, const void* arg2, void* result) {
+void complexScalarMultiply(const void* arg1, const void* arg2, void* result) {
     Complex* c1 = (Complex*)arg1;
     Complex* c2 = (Complex*)arg2;
-    Complex* res = (Complex*)result;
+    Complex* scalarResult = (Complex*)result;
 
-    res->real = c1->real * c2->real - c1->imag * c2->imag;
-    res->imag = c1->real * c2->imag + c1->imag * c2->real;
+    scalarResult->real += c1->real * c2->real + c1->imag * c2->imag;
+    scalarResult->imag += c1->real * c2->imag - c1->imag * c2->real;
 }
+
 
 void complexPrint(const void* data) {
     Complex* c = (Complex*)data;
@@ -29,6 +29,7 @@ void complexPrint(const void* data) {
 TypeInfo* GetComplexTypeInfo() {
     if (COMPLEX_TYPE_INFO == NULL) {
         COMPLEX_TYPE_INFO = (TypeInfo*)malloc(sizeof(TypeInfo));
+        if (!COMPLEX_TYPE_INFO) return NULL;
         COMPLEX_TYPE_INFO->size = sizeof(Complex);
         COMPLEX_TYPE_INFO->add = complexAdd;
         COMPLEX_TYPE_INFO->multiply = complexMultiply;

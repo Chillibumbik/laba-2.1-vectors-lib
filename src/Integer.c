@@ -1,13 +1,18 @@
 #include "integer.h"
 
-
 void intAdd(const void* arg1, const void* arg2, void* result) {
     *(int*)result = *(int*)arg1 + *(int*)arg2;
 }
 
-void intMultiply(const void* arg1, const void* arg2, void* result) {
-    *(int*)result = *(int*)arg1 * *(int*)arg2;
+void intScalarMultiply(const void* arg1, const void* arg2, void* result) {
+    int* i1 = (int*)arg1;
+    int* i2 = (int*)arg2;
+    double* scalarResult = (double*)result;
+
+    *scalarResult += (*i1) * (*i2);
 }
+
+
 
 void intPrint(const void* data) {
     printf("%d", *(const int*)data);
@@ -16,6 +21,7 @@ void intPrint(const void* data) {
 TypeInfo* GetIntTypeInfo() {
     if (INT_TYPE_INFO == NULL) {
         INT_TYPE_INFO = (TypeInfo*)malloc(sizeof(TypeInfo));
+        if (!INT_TYPE_INFO) return NULL;
         INT_TYPE_INFO->size = sizeof(int);
         INT_TYPE_INFO->add = intAdd;
         INT_TYPE_INFO->multiply = intMultiply;

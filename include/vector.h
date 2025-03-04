@@ -15,7 +15,7 @@ typedef struct {
 } Vector;
 
 
-Vector* createVector(TypeInfo* typeInfo, void **data, size_t capacity, VectorErrors* operationResult);
+Vector* createVector(TypeInfo* typeInfo, void *data, size_t capacity, VectorErrors* operationResult);
 void free_vector(Vector* v);
 VectorErrors add_vectors(const Vector* v1, const Vector* v2, Vector* result);
 VectorErrors multiply_vectors(const Vector* v1, const Vector* v2, void* result);
