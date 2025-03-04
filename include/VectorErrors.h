@@ -9,4 +9,4 @@ typedef enum {
     INCOMPATIBLE_VECTOR_TYPES = 300
 } VectorErrors;
 
-#endif // VECTORERRORS_H
+#endif 

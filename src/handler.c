@@ -41,7 +41,7 @@ void handleVectorOperations(int dataType) {
     printf("\nEnter elements of the first vector:\n");
     for (size_t i = 0; i < vectorSize; i++) {
         printf("Element %llu (for complex - {real imag}): ", i + 1);
-        if (dataType == 2) { // Complex number
+        if (dataType == 2) { 
             double real, imag;
             while (scanf("%lf %lf", &real, &imag) != 2) {
                 printf("Invalid input. Please enter both real and imaginary parts (real imag): ");
@@ -49,12 +49,12 @@ void handleVectorOperations(int dataType) {
             }
             Complex c = {real, imag};
             memcpy((char*)vector1->data + i * typeInfo->size, &c, typeInfo->size);
-        } else if (dataType == 1) { // Double
+        } else if (dataType == 1) { 
             while (scanf("%lf", (double*)((char*)vector1->data + i * typeInfo->size)) != 1) {
                 printf("Invalid input. Try again: ");
                 while(getchar() != '\n');
             }
-        } else if (dataType == 3) { // Integer
+        } else if (dataType == 3) { 
             while (scanf("%d", (int*)((char*)vector1->data + i * typeInfo->size)) != 1) {
                 printf("Invalid input. Try again: ");
                 while(getchar() != '\n');
@@ -65,7 +65,7 @@ void handleVectorOperations(int dataType) {
     printf("\nEnter elements of the second vector:\n");
     for (size_t i = 0; i < vectorSize; i++) {
         printf("Element %llu (for complex - {real imag}): ", i + 1);
-        if (dataType == 2) { // Complex number
+        if (dataType == 2) {
             double real, imag;
             while (scanf("%lf %lf", &real, &imag) != 2) {
                 printf("Invalid input. Please enter both real and imaginary parts (real imag): ");
@@ -73,12 +73,12 @@ void handleVectorOperations(int dataType) {
             }
             Complex c = {real, imag};
             memcpy((char*)vector2->data + i * typeInfo->size, &c, typeInfo->size);
-        } else if (dataType == 1) { // Double
+        } else if (dataType == 1) { 
             while (scanf("%lf", (double*)((char*)vector2->data + i * typeInfo->size)) != 1) {
                 printf("Invalid input. Try again: ");
                 while(getchar() != '\n');
             }
-        } else if (dataType == 3) { // Integer
+        } else if (dataType == 3) { 
             while (scanf("%d", (int*)((char*)vector2->data + i * typeInfo->size)) != 1) {
                 printf("Invalid input. Try again: ");
                 while(getchar() != '\n');
@@ -86,7 +86,7 @@ void handleVectorOperations(int dataType) {
         }
     }
 
-    // Вывод векторов для проверки
+
     printf("\nFirst vector:\n");
     print_vector(vector1);
 

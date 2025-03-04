@@ -15,4 +15,4 @@ void complexMultiply(const void* arg1, const void* arg2, void* result);
 void complexPrint(const void* data);
 TypeInfo* GetComplexTypeInfo();
 
-#endif // COMPLEX_H
+#endif 

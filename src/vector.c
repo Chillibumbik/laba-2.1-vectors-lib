@@ -54,11 +54,11 @@ VectorErrors multiply_vectors(const Vector* v1, const Vector* v2, void* result) 
     if (v1 == NULL || v2 == NULL || result == NULL) return VECTOR_NOT_DEFINED;
     if (v1->typeInfo->multiply == NULL) return OPERATION_NOT_DEFINED;
 
-    // Для всех типов данных скалярное произведение теперь выполняется через scalarMultiply
+
     for (size_t i = 0; i < v1->capacity; i++) {
         void* val1 = (char*)v1->data + i * v1->typeInfo->size;
         void* val2 = (char*)v2->data + i * v2->typeInfo->size;
-        v1->typeInfo->multiply(val1, val2, result);  // Вызов функции скалярного произведения из typeInfo
+        v1->typeInfo->multiply(val1, val2, result);  
     }
 
     return VECTOR_OPERATION_OK;

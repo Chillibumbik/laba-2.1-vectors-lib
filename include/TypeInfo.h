@@ -15,4 +15,4 @@ typedef struct {
     void (*print)(const void*);
 } TypeInfo;
 
-#endif // TYPEINFO_H
+#endif 
