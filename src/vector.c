@@ -38,6 +38,7 @@ void free_vector(Vector* v) {
 VectorErrors add_vectors(const Vector* v1, const Vector* v2, Vector* result) {
     if (v1 == NULL || v2 == NULL || result == NULL) return VECTOR_NOT_DEFINED;
     if (v1->typeInfo != v2->typeInfo || v1->typeInfo != result->typeInfo) return INCOMPATIBLE_VECTOR_TYPES;
+    if (v1->capacity != v2->capacity) return DIFFERENT_LENGHT_VECTORS;
     if (v1->typeInfo->add == NULL) return OPERATION_NOT_DEFINED;
 
     for (int i = 0; i < v1->capacity; i++) {
@@ -54,9 +55,9 @@ VectorErrors add_vectors(const Vector* v1, const Vector* v2, Vector* result) {
 VectorErrors multiply_vectors(const Vector* v1, const Vector* v2, void* result) {
     if (v1 == NULL || v2 == NULL || result == NULL) return VECTOR_NOT_DEFINED;
     if (v1->typeInfo != v2->typeInfo) return INCOMPATIBLE_VECTOR_TYPES;
+    if (v1->capacity != v2->capacity) return DIFFERENT_LENGHT_VECTORS;
     if (v1->typeInfo->multiply == NULL) return OPERATION_NOT_DEFINED;
-
-
+    
     for (int i = 0; i < v1->capacity; i++) {
         void* val1 = (char*)v1->data + i * v1->typeInfo->size;
         void* val2 = (char*)v2->data + i * v2->typeInfo->size;
@@ -93,5 +94,16 @@ VectorErrors find_module(const Vector* vector, void* result){
         vector->typeInfo->module(val, result);
     }
 
+    return VECTOR_OPERATION_OK;
+}
+
+VectorErrors rewrite_vector(TypeInfo* new_typeInfo, Vector *v, int new_capacity, void *new_data){
+    if (v == NULL || new_data == NULL) return VECTOR_NOT_DEFINED;
+    free(v->data);
+    v->typeInfo = new_typeInfo;
+    v->capacity = new_capacity;
+    v->data =  malloc(new_typeInfo->size * v->capacity);
+    if (v->data == NULL) return VECTOR_NOT_DEFINED;
+    memcpy(v->data, new_data, new_capacity * new_typeInfo->size);
     return VECTOR_OPERATION_OK;
 }

@@ -6,6 +6,6 @@
 #include "Double.h"
 #include "Integer.h"
 
-void handleVectorOperations(int dataType);
+void startInterface();
 
 #endif 
