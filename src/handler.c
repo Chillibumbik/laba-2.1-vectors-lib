@@ -61,7 +61,7 @@ void startInterface() {
                     break;
                 case 2: //complex
                     Complex* z = (Complex*)((char*)data + j * typeInfo->size);
-                    while (scanf("%lf %lf", &z->real, &z->imag) != 1) {
+                    while (scanf("%lf %lf", &z->real, &z->imag) != 2) {
                         printf("Invalid choice. Try again: ");
                         while(getchar() != '\n');
                     }
@@ -93,15 +93,17 @@ void startInterface() {
             short index1, index2;
             switch (operation){
             case 1: // add
-                printf("Choose vector's indexes: ");
-                while (scanf("%d %d", &index1, &index2) != 2 || index1 < 1 || index2 < 1) {
-                    printf("Invalid choice. Please enter a positive numbers: ");
+                printf("Choose vector's indexes (1 to %d): ", vector_count);
+                while (scanf("%hd %hd", &index1, &index2) != 2 || index1 < 1 || index2 < 1 || index1 > vector_count || index2 > vector_count) {
+                    printf("Invalid choice. Please enter numbers between 1 and %d: ", vector_count);
                     while(getchar() != '\n');
                 }
+                
                 index1 -= 1;
                 index2 -= 1;
 
-                Vector* add_result = createVector(vectors[index1]->typeInfo, NULL, vectors[index1]->capacity, &operation_result);
+                Vector* add_result = createVector(vectors[index1]->typeInfo, malloc(vectors[index1]->capacity * vectors[index1]->typeInfo->size), vectors[index1]->capacity, &operation_result);
+
                 
                 if(errors_handler(add_vectors(vectors[index1], vectors[index2], add_result))){
                     break;
@@ -115,19 +117,20 @@ void startInterface() {
                 
                 break;
             case 2: // scalar
-                printf("Choose vector's indexes: ");
-                while (scanf("%d %d", &index1, &index2) != 2 || index1 < 1 || index2 < 1) {
-                    printf("Invalid choice. Please enter a positive numbers: ");
+                printf("Choose vector's indexes (1 to %d): ", vector_count);
+                while (scanf("%hd %hd", &index1, &index2) != 2 || index1 < 1 || index2 < 1 || index1 > vector_count || index2 > vector_count) {
+                    printf("Invalid choice. Please enter numbers between 1 and %d: ", vector_count);
                     while(getchar() != '\n');
                 }
+                
                 index1 -= 1;
                 index2 -= 1;
 
-                void* result = malloc(sizeof(double)*2);
+                void* result = malloc(vectors[index1]->typeInfo->size);
                 if(errors_handler(multiply_vectors(vectors[index1], vectors[index2], result))){
                     break;
                 }else{
-                printf("Scalar product of vectors %d and %d: %lf\n\n", index1+1, index2+1);
+                printf("Scalar product of vectors %d and %d: ", index1+1, index2+1);
                 vectors[index1]->typeInfo->print(result);
                 }
                 free(result);
@@ -182,7 +185,8 @@ void startInterface() {
                     new_typeInfo = GetIntTypeInfo();
                 }
                 printf("Enter new coordinates of %d vector:\n", index1+1);
-                void* new_coord = malloc(vectors[index1]->capacity * sizeof(vectors[index1]->typeInfo->size));
+                void* new_coord = malloc(new_size * vectors[index1]->typeInfo->size);
+
                 
                 for (int j=0; j < new_size; j++){
                     switch (new_type){
@@ -205,17 +209,18 @@ void startInterface() {
                                 while(getchar() != '\n');
                             }
                             break;
-                    }   
+                    } 
+                }  
                 if(errors_handler(rewrite_vector(new_typeInfo, vectors[index1], new_size, new_coord))){
                     break;
                 }
-                else{
-                    printf("Changed vector %d: ", index1+1);
-                    print_vector(vectors[index1]);
-                }
+                
+                printf("Changed vector %d\n", index1+1);
+                print_vector(vectors[index1]);
+                
                 free(new_coord);
                 break;
-            }
+            
             case 6: // exit
                 printf("Have a good day!\n");
                 exit(0);

@@ -58,12 +58,16 @@ VectorErrors multiply_vectors(const Vector* v1, const Vector* v2, void* result) 
     if (v1->capacity != v2->capacity) return DIFFERENT_LENGHT_VECTORS;
     if (v1->typeInfo->multiply == NULL) return OPERATION_NOT_DEFINED;
     
-    for (int i = 0; i < v1->capacity; i++) {
-        void* val1 = (char*)v1->data + i * v1->typeInfo->size;
-        void* val2 = (char*)v2->data + i * v2->typeInfo->size;
-        v1->typeInfo->multiply(val1, val2, result);  
+    memset(result, 0, v1->typeInfo->size);
+    for(int i=0; i<v1->capacity; i++){
+        void* arg1 = (char*)v1->data + i * v1->typeInfo->size;
+        void* arg2 = (char*)v2->data + i * v2->typeInfo->size;
+        void* temp_result = malloc(v1->typeInfo->size);
+        if (temp_result == NULL) return MEMORY_ALLOCATION_FAILED; 
+        v1->typeInfo->multiply(arg1, arg2, temp_result);  
+        v1->typeInfo->add(result, temp_result, result);
+        free(temp_result); 
     }
-
     return VECTOR_OPERATION_OK;
 }
 

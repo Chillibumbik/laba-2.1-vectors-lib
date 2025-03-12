@@ -5,11 +5,7 @@ void intAdd(const void* arg1, const void* arg2, void* result) {
 }
 
 void intMultiply(const void* arg1, const void* arg2, void* result) {
-    int* i1 = (int*)arg1;
-    int* i2 = (int*)arg2;
-    double* scalarResult = (double*)result;
-
-    *scalarResult += (*i1) * (*i2);
+    *(int*)result = *(int*)arg1 * *(int*)arg2;
 }
 
 

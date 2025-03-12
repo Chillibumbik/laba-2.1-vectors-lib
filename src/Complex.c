@@ -23,7 +23,7 @@ void complexMultiply(const void* arg1, const void* arg2, void* result) {
 
 void complexPrint(const void* data) {
     Complex* c = (Complex*)data;
-    printf("%lf + %lfi", c->real, c->imag);
+    printf("%.3lf + %.3lfi", c->real, c->imag);
 }
 
 void complexModule(const void* arg, void* result){
