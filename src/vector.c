@@ -4,7 +4,7 @@
 #include "vector.h"
 #include "VectorErrors.h"
 
-Vector* createVector(TypeInfo* typeInfo, void *data, size_t capacity, VectorErrors* operationResult){
+Vector* createVector(TypeInfo* typeInfo, void *data, int capacity, VectorErrors* operationResult){
     Vector* vector = (Vector*)malloc(sizeof(Vector));
     if (vector == NULL) {
         *operationResult = MEMORY_ALLOCATION_FAILED;
@@ -39,7 +39,7 @@ VectorErrors add_vectors(const Vector* v1, const Vector* v2, Vector* result) {
     if (v1 == NULL || v2 == NULL || result == NULL) return VECTOR_NOT_DEFINED;
     if (v1->typeInfo->add == NULL) return OPERATION_NOT_DEFINED;
 
-    for (size_t i = 0; i < v1->capacity; i++) {
+    for (int i = 0; i < v1->capacity; i++) {
         v1->typeInfo->add(
             (char*)v1->data + i * v1->typeInfo->size,
             (char*)v2->data + i * v1->typeInfo->size,
@@ -55,7 +55,7 @@ VectorErrors multiply_vectors(const Vector* v1, const Vector* v2, void* result) 
     if (v1->typeInfo->multiply == NULL) return OPERATION_NOT_DEFINED;
 
 
-    for (size_t i = 0; i < v1->capacity; i++) {
+    for (int i = 0; i < v1->capacity; i++) {
         void* val1 = (char*)v1->data + i * v1->typeInfo->size;
         void* val2 = (char*)v2->data + i * v2->typeInfo->size;
         v1->typeInfo->multiply(val1, val2, result);  
@@ -71,7 +71,7 @@ VectorErrors print_vector(const Vector* vector) {
     if (vector->typeInfo->print == NULL) return OPERATION_NOT_DEFINED;
 
     printf("Vector: (");
-    for (size_t i = 0; i < vector->capacity; i++) {
+    for (int i = 0; i < vector->capacity; i++) {
         vector->typeInfo->print((char*)vector->data + i * vector->typeInfo->size);
         if (i < vector->capacity - 1) {
             printf(", ");

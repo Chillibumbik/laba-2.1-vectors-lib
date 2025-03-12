@@ -1,5 +1,5 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -Wpedantic -std=c11 -Iinclude -Itests/include_tests
+CC = gcc  #-Wall      
+CFLAGS =  -Wextra -Wpedantic -std=c11 -Iinclude -Itests/include_tests
 
 SRC_DIR = src
 INC_DIR = include

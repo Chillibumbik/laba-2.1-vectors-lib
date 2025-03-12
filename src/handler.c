@@ -10,23 +10,29 @@
 void handleVectorOperations(int dataType) {
     TypeInfo* typeInfo = NULL;
     
-    if (dataType == 1) {
-        typeInfo = GetDoubleTypeInfo();
-    } else if (dataType == 2) {
-        typeInfo = GetComplexTypeInfo();
-    } else if (dataType == 3) {
-        typeInfo = GetIntTypeInfo();
-    } else {
-        printf("Invalid type selected!\n");
-        return;
+    switch (dataType){
+        case 1: //double 
+            typeInfo = GetDoubleTypeInfo();
+            break;
+        case 2: //complex
+            typeInfo = GetComplexTypeInfo();
+            break;
+        case 3: //integer
+            typeInfo = GetIntTypeInfo();
+            break;
+        default:
+            printf("Invalid type selected!\n");
+            return;
     }
 
-    size_t vectorSize;
+    int size;
     printf("Enter the size of the vectors: ");
-    while (scanf("%llu", &vectorSize) != 1 || vectorSize == 0) {
+    while (scanf("%d", &size) != 1 || size <= 0) {
         printf("Invalid size. Please enter a positive integer: ");
-        while(getchar() != '\n');
+        while (getchar() != '\n'); 
     }
+    unsigned int vectorSize = (unsigned int)size;
+    
 
     VectorErrors opResult;
     Vector* vector1 = createVector(typeInfo, NULL, vectorSize, &opResult);
@@ -39,7 +45,7 @@ void handleVectorOperations(int dataType) {
     }
 
     printf("\nEnter elements of the first vector:\n");
-    for (size_t i = 0; i < vectorSize; i++) {
+    for (unsigned int i = 0; i < vectorSize; i++) {
         printf("Element %llu (for complex - {real imag}): ", i + 1);
         if (dataType == 2) { 
             double real, imag;
@@ -63,7 +69,7 @@ void handleVectorOperations(int dataType) {
     }
 
     printf("\nEnter elements of the second vector:\n");
-    for (size_t i = 0; i < vectorSize; i++) {
+    for (unsigned int i = 0; i < vectorSize; i++) {
         printf("Element %llu (for complex - {real imag}): ", i + 1);
         if (dataType == 2) {
             double real, imag;
