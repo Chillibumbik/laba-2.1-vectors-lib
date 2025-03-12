@@ -116,18 +116,19 @@ void handleVectorOperations(int dataType) {
     }
 
     switch (operation){
-    case 1:
+    case 1: // add
         add_vectors(vector1, vector2, result);
         printf("Result of addition:\n\n");
         print_vector(result);
         break;
-    case 2:
+    case 2: // scalar
         double scalarResult = 0;
         multiply_vectors(vector1, vector2, &scalarResult);
         printf("Scalar product: %lf\n\n", scalarResult);
         break;
-    case 3:
-        break;
+    case 3: // exit
+        printf("Have a good day!\n");
+        exit(0);
     }
 
     free_vector(vector1);
