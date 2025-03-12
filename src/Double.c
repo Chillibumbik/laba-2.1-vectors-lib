@@ -17,6 +17,13 @@ void doublePrint(const void* data) {
     printf("%lf", *(const double*)data);
 }
 
+void doubleModule(const void* arg, void* result){
+    double* d1 = (double*)arg;
+    double* moduleResult = (double*)result;
+
+    *moduleResult += (*d1) * (*d1);
+}
+
 TypeInfo* GetDoubleTypeInfo() {
     if (DOUBLE_TYPE_INFO == NULL) {
         DOUBLE_TYPE_INFO = (TypeInfo*)malloc(sizeof(TypeInfo));
@@ -25,6 +32,7 @@ TypeInfo* GetDoubleTypeInfo() {
         DOUBLE_TYPE_INFO->add = doubleAdd;
         DOUBLE_TYPE_INFO->multiply = doubleMultiply;
         DOUBLE_TYPE_INFO->print = doublePrint;
+        DOUBLE_TYPE_INFO->module = doubleModule;
     }
     return DOUBLE_TYPE_INFO;
 }

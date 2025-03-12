@@ -6,6 +6,7 @@
 #include "Complex.h"
 #include "Double.h"
 #include "Integer.h"
+#include <math.h>
 
 void handleVectorOperations(int dataType) {
     TypeInfo* typeInfo = NULL;
@@ -109,7 +110,7 @@ void handleVectorOperations(int dataType) {
     print_vector(vector2);
 
     short operation;
-    printf("\nSelect operation: 1 - Add, 2 - Scalar Product, 3 - Exit: ");
+    printf("\nSelect operation: 1 - Add, 2 - Scalar Product, 3 - Module, 4 - Exit: ");
     while (scanf("%d", &operation) != 1 || operation < 1 || operation > 3) {
         printf("Invalid choice. Try again: ");
         while(getchar() != '\n');
@@ -126,7 +127,26 @@ void handleVectorOperations(int dataType) {
         multiply_vectors(vector1, vector2, &scalarResult);
         printf("Scalar product: %lf\n\n", scalarResult);
         break;
-    case 3: // exit
+    case 3: // module
+        unsigned short number_of_vector;
+        double pre_module = 0;
+        printf("Select Vector: ");
+        while (scanf("%u", &number_of_vector) != 1 || number_of_vector < 1  || number_of_vector > 2){
+            printf("Invalid number. Please enter a number from 1 to 2: ");
+            while(getchar() != '\n');
+        }
+        switch (number_of_vector){
+            case 1:
+                find_module(vector1, &pre_module);
+                break;
+            case 2:
+                find_module(vector2, &pre_module);
+                break;
+        }
+        double module = sqrt(pre_module);
+        printf("The module of %u vector: %.2f\n\n", number_of_vector, module);
+        break;
+    case 4: // exit
         printf("Have a good day!\n");
         exit(0);
     }

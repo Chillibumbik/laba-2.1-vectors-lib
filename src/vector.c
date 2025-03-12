@@ -37,6 +37,7 @@ void free_vector(Vector* v) {
 
 VectorErrors add_vectors(const Vector* v1, const Vector* v2, Vector* result) {
     if (v1 == NULL || v2 == NULL || result == NULL) return VECTOR_NOT_DEFINED;
+    if (v1->typeInfo != v2->typeInfo || v1->typeInfo != result->typeInfo) return INCOMPATIBLE_VECTOR_TYPES;
     if (v1->typeInfo->add == NULL) return OPERATION_NOT_DEFINED;
 
     for (int i = 0; i < v1->capacity; i++) {
@@ -52,6 +53,7 @@ VectorErrors add_vectors(const Vector* v1, const Vector* v2, Vector* result) {
 
 VectorErrors multiply_vectors(const Vector* v1, const Vector* v2, void* result) {
     if (v1 == NULL || v2 == NULL || result == NULL) return VECTOR_NOT_DEFINED;
+    if (v1->typeInfo != v2->typeInfo) return INCOMPATIBLE_VECTOR_TYPES;
     if (v1->typeInfo->multiply == NULL) return OPERATION_NOT_DEFINED;
 
 
@@ -78,6 +80,18 @@ VectorErrors print_vector(const Vector* vector) {
         }
     }
     printf(")");
+
+    return VECTOR_OPERATION_OK;
+}
+
+VectorErrors find_module(const Vector* vector, void* result){
+    if (vector == NULL || result == NULL) return VECTOR_NOT_DEFINED;
+    if (vector->typeInfo->module == NULL) return OPERATION_NOT_DEFINED;
+    
+    for(int i=0; i < vector->capacity; i++){
+        void* val = (char*)vector->data + i * vector->typeInfo->size;
+        vector->typeInfo->module(val, result);
+    }
 
     return VECTOR_OPERATION_OK;
 }

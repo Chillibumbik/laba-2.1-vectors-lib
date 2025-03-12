@@ -16,14 +16,22 @@ void complexMultiply(const void* arg1, const void* arg2, void* result) {
     Complex* c2 = (Complex*)arg2;
     Complex* scalarResult = (Complex*)result;
 
-    scalarResult->real += c1->real * c2->real + c1->imag * c2->imag;
-    scalarResult->imag += c1->real * c2->imag - c1->imag * c2->real;
+    scalarResult->real += c1->real * c2->real - c1->imag * c2->imag;
+    scalarResult->imag += c1->real * c2->imag + c1->imag * c2->real;
 }
 
 
 void complexPrint(const void* data) {
     Complex* c = (Complex*)data;
     printf("%lf + %lfi", c->real, c->imag);
+}
+
+void complexModule(const void* arg, void* result){
+    Complex* c1 = (Complex*)arg;
+    Complex* moduleResult = (Complex*)result;
+
+    moduleResult->real += c1->real * c1->real - c1->imag * c1->imag;
+    moduleResult->imag += c1->real * c1->imag + c1->imag * c1->real;
 }
 
 TypeInfo* GetComplexTypeInfo() {
@@ -34,6 +42,7 @@ TypeInfo* GetComplexTypeInfo() {
         COMPLEX_TYPE_INFO->add = complexAdd;
         COMPLEX_TYPE_INFO->multiply = complexMultiply;
         COMPLEX_TYPE_INFO->print = complexPrint;
+        COMPLEX_TYPE_INFO->module = complexModule;
     }
     return COMPLEX_TYPE_INFO;
 }

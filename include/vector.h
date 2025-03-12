@@ -20,6 +20,6 @@ void free_vector(Vector* v);
 VectorErrors add_vectors(const Vector* v1, const Vector* v2, Vector* result);
 VectorErrors multiply_vectors(const Vector* v1, const Vector* v2, void* result);
 VectorErrors print_vector(const Vector* v);
-
+VectorErrors find_module(const Vector* v, void* result);
 
 #endif

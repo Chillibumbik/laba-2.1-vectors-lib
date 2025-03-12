@@ -18,6 +18,13 @@ void intPrint(const void* data) {
     printf("%d", *(const int*)data);
 }
 
+void intModule(const void* arg, void* result){
+    int* i1 = (int*)arg;
+    double* moduleResult = (double*)result;
+
+    *moduleResult += (*i1) * (*i1);
+}
+
 TypeInfo* GetIntTypeInfo() {
     if (INT_TYPE_INFO == NULL) {
         INT_TYPE_INFO = (TypeInfo*)malloc(sizeof(TypeInfo));
@@ -26,6 +33,7 @@ TypeInfo* GetIntTypeInfo() {
         INT_TYPE_INFO->add = intAdd;
         INT_TYPE_INFO->multiply = intMultiply;
         INT_TYPE_INFO->print = intPrint;
+        INT_TYPE_INFO->module = intModule;
     }
     return INT_TYPE_INFO;
 }
