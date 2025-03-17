@@ -13,7 +13,7 @@ OBJ_FILES = $(SRC_FILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 
 TEST_SRC_DIR = test
-TEST_SRC_FILES = $(TEST_SRC_DIR)/test.c $(SRC_DIR)/vector.c $(SRC_DIR)/Complex.c $(SRC_DIR)/Double.c $(SRC_DIR)/Integer.c
+TEST_SRC_FILES = $(TEST_SRC_DIR)/test.c $(SRC_DIR)/vector.c $(SRC_DIR)/Complex.c $(SRC_DIR)/Double.c $(SRC_DIR)/Integer.c $(SRC_DIR)/VectorErrors.c
 TEST_OBJ_FILES = $(TEST_SRC_FILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 TEST_TARGET = $(BIN_DIR)/test_program
 
