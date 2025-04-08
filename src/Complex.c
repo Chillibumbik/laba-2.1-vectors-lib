@@ -26,12 +26,12 @@ void complexPrint(const void* data) {
     printf("%.3lf + %.3lfi", c->real, c->imag);
 }
 
-void complexModule(const void* arg, void* result){
+void complexabs(const void* arg, void* result){
     Complex* c1 = (Complex*)arg;
-    Complex* moduleResult = (Complex*)result;
+    Complex* absResult = (Complex*)result;
 
-    moduleResult->real += c1->real * c1->real - c1->imag * c1->imag;
-    moduleResult->imag += c1->real * c1->imag + c1->imag * c1->real;
+    absResult->real += c1->real * c1->real - c1->imag * c1->imag;
+    absResult->imag += c1->real * c1->imag + c1->imag * c1->real;
 }
 
 TypeInfo* GetComplexTypeInfo() {
@@ -42,7 +42,7 @@ TypeInfo* GetComplexTypeInfo() {
         COMPLEX_TYPE_INFO->add = complexAdd;
         COMPLEX_TYPE_INFO->multiply = complexMultiply;
         COMPLEX_TYPE_INFO->print = complexPrint;
-        COMPLEX_TYPE_INFO->module = complexModule;
+        COMPLEX_TYPE_INFO->abs = complexabs;
     }
     return COMPLEX_TYPE_INFO;
 }

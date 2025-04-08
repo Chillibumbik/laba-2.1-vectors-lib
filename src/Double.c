@@ -13,11 +13,11 @@ void doublePrint(const void* data) {
     printf("%.3lf", *(const double*)data);
 }
 
-void doubleModule(const void* arg, void* result){
+void doubleabs(const void* arg, void* result){
     double* d1 = (double*)arg;
-    double* moduleResult = (double*)result;
+    double* absResult = (double*)result;
 
-    *moduleResult += (*d1) * (*d1);
+    *absResult += (*d1) * (*d1);
 }
 
 TypeInfo* GetDoubleTypeInfo() {
@@ -28,7 +28,7 @@ TypeInfo* GetDoubleTypeInfo() {
         DOUBLE_TYPE_INFO->add = doubleAdd;
         DOUBLE_TYPE_INFO->multiply = doubleMultiply;
         DOUBLE_TYPE_INFO->print = doublePrint;
-        DOUBLE_TYPE_INFO->module = doubleModule;
+        DOUBLE_TYPE_INFO->abs = doubleabs;
     }
     return DOUBLE_TYPE_INFO;
 }

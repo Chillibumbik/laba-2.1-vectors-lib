@@ -6,8 +6,43 @@
 #include "double.h"
 #include "Complex.h"
 #include "integer.h"
+#include <stdbool.h>
 
 #define EPS 1e-9
+
+bool compare_vectors(Vector* v1, Vector* v2) {
+    if (v1 == NULL || v2 == NULL) return false;
+    if (v1->size != v2->size) return false;
+    if (v1->typeInfo != v2->typeInfo) return false;
+
+    for (int i = 0; i < v1->size; i++) {
+        if (v1->typeInfo == GetDoubleTypeInfo()) {
+            double val1 = ((double*)v1->data)[i];
+            double val2 = ((double*)v2->data)[i];
+            if (fabs(val1 - val2) >= EPS) {
+                return false;
+            }
+        } else if (v1->typeInfo == GetIntegerTypeInfo()) {
+            int val1 = ((int*)v1->data)[i];
+            int val2 = ((int*)v2->data)[i];
+            if (val1 != val2) {
+                return false;
+            }
+        } else if (v1->typeInfo == GetComplexTypeInfo()) {
+            Complex val1 = ((Complex*)v1->data)[i];
+            Complex val2 = ((Complex*)v2->data)[i];
+            if (fabs(val1.real - val2.real) >= EPS || fabs(val1.imag - val2.imag) >= EPS) {
+                return false;
+            }
+        } else {
+            // Неизвестный тип данных
+            return false;
+        }
+    }
+
+    return true;
+}
+
 
 int perform_invalid_operation(Vector* v) {
     return OPERATION_NOT_DEFINED;
@@ -28,11 +63,14 @@ void test_double_operations() {
     if (errors_handler(operation_result)) return;
     
     double expected_sum[] = {9.7, 1.6, 9.4, -1.3};
-    for (int i = 0; i < 4; i++) {
-        if (fabs(((double*)v_res->data)[i] - expected_sum[i]) >= EPS) {
-            printf("Error in addition at index %d\n", i);
-        }
+    Vector* expected_vector = createVector(GetDoubleTypeInfo(), expected_sum, 4, &operation_result);
+    if (errors_handler(operation_result)) return;
+    
+    if (!compare_vectors(v_res, expected_vector)) {
+        printf("Error in addition: result vector doesn't match expected values.\n");
     }
+    free_vector(expected_vector);
+    
 
     double scalar_result = 0.0;
     operation_result = multiply_vectors(v1, v2, &scalar_result);
@@ -119,7 +157,7 @@ void test_empty_vector() {
     VectorErrors operation_result;
     Vector* v = createVector(GetDoubleTypeInfo(), malloc(4 * sizeof(double)), 0, &operation_result);
     if (errors_handler(operation_result)) return;
-    if (v == NULL || v->capacity != 0) {
+    if (v == NULL || v->size != 0) {
         printf("Error in empty vector creation\n");
     }
     free_vector(v);

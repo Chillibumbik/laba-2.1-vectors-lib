@@ -5,231 +5,289 @@
 #include "VectorErrors.h"
 #include <math.h>
 
-void startInterface() {
-    unsigned int vector_count; 
-    printf("Enter the number of vectors: ");
-    while (scanf("%u", &vector_count) != 1 || vector_count < 1) {
-        printf("Invalid input. Please select a positive number: ");
-        while(getchar() != '\n');
+VectorList* create_vector_list() {
+    VectorList* list = malloc(sizeof(VectorList));
+    list->size = 0;
+    list->capacity = 4;
+    list->items = malloc(sizeof(Vector*) * list->capacity);
+    return list;
+}
+
+void push_vector(VectorList* list, Vector* vector) {
+    if (list->size >= list->capacity) {
+        list->capacity *= 2;
+        list->items = realloc(list->items, sizeof(Vector*) * list->capacity);
     }
+    list->items[list->size++] = vector;
+}
+
+void remove_vector(VectorList* list, unsigned int index) {
+    if (index >= list->size) return;
+    free_vector(list->items[index]);
+    for (unsigned int i = index; i < list->size - 1; i++) {
+        list->items[i] = list->items[i + 1];
+    }
+    list->size--;
+}
+
+void startInterface() {
+    VectorList* vector_list = create_vector_list();
     VectorErrors operation_result;
 
-    Vector** vectors = malloc(vector_count * sizeof(Vector*));
-    for (unsigned int i = 0; i < vector_count; i++){
-        int dataType;
-        printf("Select data type:\n");
-        printf("1 - Double\n2 - Complex\n3 - Integer\n");
-        while (scanf("%d", &dataType) != 1 || dataType < 1 || dataType > 3) {
-            printf("Invalid input. Please select a valid option (1, 2, 3): ");
-            while(getchar() != '\n');
-        }
-    
-        TypeInfo* typeInfo = NULL;
-    
-        switch (dataType){
-            case 1: //double 
-                typeInfo = GetDoubleTypeInfo();
-                break;
-            case 2: //complex
-                typeInfo = GetComplexTypeInfo();
-                break;
-            case 3: //integer
-                typeInfo = GetIntTypeInfo();
-                break;
-            default:
-                printf("Invalid type selected!\n");
-                return;
+    while (1) {
+        printf("\nChoose operation:\n");
+        printf("1 - Addition\n");
+        printf("2 - Scalar Product\n");
+        printf("3 - Norm\n");
+        printf("4 - Show all vectors\n");
+        printf("5 - Modify a vector\n");
+        printf("6 - Add a vector\n");
+        printf("7 - Remove a vector\n");
+        printf("8 - Exit\n");
+
+        short operation;
+        while (scanf("%hd", &operation) != 1 || operation < 1 || operation > 8) {
+            printf("Invalid choice. Try again: ");
+            while (getchar() != '\n');
         }
 
-        int size;
-        printf("Enter the size of the vector: ");
-        while (scanf("%d", &size) != 1 || size <= 0) {
-            printf("Invalid size. Please enter a positive integer: ");
-            while (getchar() != '\n'); 
-        }
-        
-        printf("Enter %d vector coordinates(for complex - {real imag})\n", i + 1);
-        void* data = malloc(size * typeInfo->size);
-        
-        for (int j=0; j < size; j++){
-            switch (dataType){
-                case 1: //double 
-                    while (scanf("%lf", (double*)((char*)data + j * typeInfo->size)) != 1) {
-                        printf("Invalid choice. Try again: ");
-                        while(getchar() != '\n');
-                    }
-                    break;
-                case 2: //complex
-                    Complex* z = (Complex*)((char*)data + j * typeInfo->size);
-                    while (scanf("%lf %lf", &z->real, &z->imag) != 2) {
-                        printf("Invalid choice. Try again: ");
-                        while(getchar() != '\n');
-                    }
-                    break;
-                case 3: //integer
-                    while (scanf("%d", (int*)((char*)data + j * typeInfo->size)) != 1) {
-                        printf("Invalid choice. Try again: ");
-                        while(getchar() != '\n');
-                    }
-                    break;
-            }   
-        
-        }
-        vectors[i] = createVector(typeInfo, data, size, &operation_result);
-        printf("Vector %d\n", i+1);
-        print_vector(vectors[i]);
-        printf("\n\n");
+        unsigned int index1, index2;
 
-    }
-
-        while(1){
-            short operation;
-            printf("\nSelect operation: 1 - Add, 2 - Scalar Product, 3 - Module, 4 - see list of vectors, 5 - change coordinates of vector, 6 - Exit: ");
-            while (scanf("%d", &operation) != 1 || operation < 1 || operation > 6) {
-                printf("Invalid choice. Try again: ");
-                while(getchar() != '\n');
-            }
-            
-            short index1, index2;
-            switch (operation){
-            case 1: // add
-                printf("Choose vector's indexes (1 to %d): ", vector_count);
-                while (scanf("%hd %hd", &index1, &index2) != 2 || index1 < 1 || index2 < 1 || index1 > vector_count || index2 > vector_count) {
-                    printf("Invalid choice. Please enter numbers between 1 and %d: ", vector_count);
-                    while(getchar() != '\n');
+        switch (operation) {
+            case 1: // Addition
+                if (vector_list->size < 2) {
+                    printf("At least two vectors are required.\n");
+                    break;
                 }
-                
-                index1 -= 1;
-                index2 -= 1;
+                printf("Enter indices of two vectors to add (1 to %u): ", vector_list->size);
+                while (scanf("%u %u", &index1, &index2) != 2 || index1 < 1 || index2 < 1 || index1 > vector_list->size || index2 > vector_list->size) {
+                    printf("Invalid input. Try again: ");
+                    while (getchar() != '\n');
+                }
 
-                Vector* add_result = createVector(vectors[index1]->typeInfo, malloc(vectors[index1]->capacity * vectors[index1]->typeInfo->size), vectors[index1]->capacity, &operation_result);
-
-                
-                if(errors_handler(add_vectors(vectors[index1], vectors[index2], add_result))){
+                index1--; index2--;
+                Vector* add_result = createVector(
+                    vector_list->items[index1]->typeInfo,
+                    malloc(vector_list->items[index1]->size * vector_list->items[index1]->typeInfo->size),
+                    vector_list->items[index1]->size,
+                    &operation_result
+                );
+                if (errors_handler(add_vectors(vector_list->items[index1], vector_list->items[index2], add_result))) {
                     break;
-                }else{ 
-                printf("Result of addition of vectors %d and %d:\n", index1+1, index2+1);
+                }
+
+                printf("Result of addition:\n");
                 print_vector(add_result);
-                printf("\n\n");
-                }
-
                 free_vector(add_result);
-                
                 break;
-            case 2: // scalar
-                printf("Choose vector's indexes (1 to %d): ", vector_count);
-                while (scanf("%hd %hd", &index1, &index2) != 2 || index1 < 1 || index2 < 1 || index1 > vector_count || index2 > vector_count) {
-                    printf("Invalid choice. Please enter numbers between 1 and %d: ", vector_count);
-                    while(getchar() != '\n');
-                }
-                
-                index1 -= 1;
-                index2 -= 1;
 
-                void* result = malloc(vectors[index1]->typeInfo->size);
-                if(errors_handler(multiply_vectors(vectors[index1], vectors[index2], result))){
+            case 2: // Scalar Product
+                if (vector_list->size < 2) {
+                    printf("At least two vectors are required.\n");
                     break;
-                }else{
-                printf("Scalar product of vectors %d and %d: ", index1+1, index2+1);
-                vectors[index1]->typeInfo->print(result);
                 }
-                free(result);
+                printf("Enter indices of two vectors (1 to %u): ", vector_list->size);
+                while (scanf("%u %u", &index1, &index2) != 2 || index1 < 1 || index2 < 1 || index1 > vector_list->size || index2 > vector_list->size) {
+                    printf("Invalid input. Try again: ");
+                    while (getchar() != '\n');
+                }
+
+                index1--; index2--;
+                void* scalar_result = malloc(vector_list->items[index1]->typeInfo->size);
+                if (errors_handler(multiply_vectors(vector_list->items[index1], vector_list->items[index2], scalar_result))) {
+                    break;
+                }
+
+                printf("Scalar product result: ");
+                vector_list->items[index1]->typeInfo->print(scalar_result);
+                printf("\n");
+                free(scalar_result);
                 break;
 
-            case 3: // module
-                unsigned short number_of_vector;
-                double pre_module = 0;
-                printf("Select Vector: ");
-                while (scanf("%u", &number_of_vector) != 1 || number_of_vector < 1){
-                    printf("Invalid number. Please enter a positive number: ");
-                    while(getchar() != '\n');
+            case 3: { // Norm
+                if (vector_list->size == 0) {
+                    printf("No vectors available.\n");
+                    break;
                 }
-                find_module(vectors[number_of_vector-1], &pre_module);
-                double module = sqrt(pre_module);
-                printf("The module of %u vector: %.2f\n\n", number_of_vector, module);
+                unsigned short idx;
+                printf("Enter vector index (1 to %u): ", vector_list->size);
+                while (scanf("%hu", &idx) != 1 || idx < 1 || idx > vector_list->size) {
+                    printf("Invalid input. Try again: ");
+                    while (getchar() != '\n');
+                }
+
+                double pre_norm = 0;
+                if (errors_handler(find_abs(vector_list->items[idx - 1], &pre_norm))) {
+                    break;
+                }
+
+                printf("Vector norm: %.4lf\n", sqrt(pre_norm));
                 break;
-            
-            case 4: // list of vectors
-                for(unsigned int j=0; j<vector_count; j++){
-                    print_vector(vectors[j]);
+            }
+
+            case 4: // Show all vectors
+                if (vector_list->size == 0) {
+                    printf("No vectors to display.\n");
+                    break;
+                }
+
+                for (unsigned int i = 0; i < vector_list->size; i++) {
+                    printf("Vector %u:\n", i + 1);
+                    print_vector(vector_list->items[i]);
                     printf("\n");
                 }
                 break;
-            
-            case 5: // change vec coords
-                printf("Select Vector: ");
 
-                while (scanf("%d", &index1) != 1 || number_of_vector < 1){
-                    printf("Invalid number. Please enter a positive number: ");
-                    while(getchar() != '\n');
-                }
-
-                index1-=1;
-                printf("Choose vector's %d type (1-double, 2-complex, 3-integer)\n", index1+1);
-                int new_type;
-                scanf("%d", &new_type);
-                printf("Enter the size of vector %d\n", index1+1);
-                int new_size;
-                while (scanf("%d", &new_size) != 1 || new_size <= 0) {
-                    printf("Invalid size. Please enter a positive integer: ");
-                    while (getchar() != '\n'); 
-                }
-                TypeInfo* new_typeInfo = NULL;
-                if(new_type==1){
-                    new_typeInfo = GetDoubleTypeInfo();
-                }
-                if(new_type==2){
-                    new_typeInfo = GetComplexTypeInfo();
-                }
-                if(new_type==3){
-                    new_typeInfo = GetIntTypeInfo();
-                }
-                printf("Enter new coordinates of %d vector:\n", index1+1);
-                void* new_coord = malloc(new_size * vectors[index1]->typeInfo->size);
-
-                
-                for (int j=0; j < new_size; j++){
-                    switch (new_type){
-                        case 1: //double 
-                            while (scanf("%lf", (double*)((char*)new_coord + j * new_typeInfo->size)) != 1) {
-                                printf("Invalid choice. Try again: ");
-                                while(getchar() != '\n');
-                            }
-                            break;
-                        case 2: //complex
-                            Complex* z = (Complex*)((char*)new_coord + j * new_typeInfo->size);
-                            while (scanf("%lf %lf", &z->real, &z->imag) != 1) {
-                                printf("Invalid choice. Try again: ");
-                                while(getchar() != '\n');
-                            }
-                            break;
-                        case 3: //integer
-                            while (scanf("%d", (int*)((char*)new_coord + j * new_typeInfo->size)) != 1) {
-                                printf("Invalid choice. Try again: ");
-                                while(getchar() != '\n');
-                            }
-                            break;
-                    } 
-                }  
-                if(errors_handler(rewrite_vector(new_typeInfo, vectors[index1], new_size, new_coord))){
+            case 5: { // Modify vector
+                if (vector_list->size == 0) {
+                    printf("No vectors to modify.\n");
                     break;
                 }
-                
-                printf("Changed vector %d\n", index1+1);
-                print_vector(vectors[index1]);
-                
-                free(new_coord);
-                break;
-            
-            case 6: // exit
-                printf("Have a good day!\n");
-                exit(0);
-            }
-    }
 
-    
-    for ( unsigned int i = 0; i < vector_count; i++) {
-        free_vector(vectors[i]);
+                printf("Enter vector index (1 to %u): ", vector_list->size);
+                while (scanf("%u", &index1) != 1 || index1 < 1 || index1 > vector_list->size) {
+                    printf("Invalid input. Try again: ");
+                    while (getchar() != '\n');
+                }
+
+                index1--;
+
+                printf("Choose new type: 1 - Double, 2 - Complex, 3 - Integer: ");
+                int new_type;
+                while (scanf("%d", &new_type) != 1 || new_type < 1 || new_type > 3) {
+                    printf("Invalid choice. Try again: ");
+                    while (getchar() != '\n');
+                }
+
+                TypeInfo* new_typeInfo = NULL;
+                if (new_type == 1) new_typeInfo = GetDoubleTypeInfo();
+                else if (new_type == 2) new_typeInfo = GetComplexTypeInfo();
+                else new_typeInfo = GetIntTypeInfo();
+
+                int new_size;
+                printf("Enter new vector size: ");
+                while (scanf("%d", &new_size) != 1 || new_size <= 0) {
+                    printf("Invalid size. Try again: ");
+                    while (getchar() != '\n');
+                }
+
+                void* new_data = malloc(new_size * new_typeInfo->size);
+                printf("Enter coordinates (%s):\n", (new_type == 2) ? "real imag pairs" : "one per element");
+
+                for (int j = 0; j < new_size; j++) {
+                    switch (new_type) {
+                        case 1:
+                            while (scanf("%lf", (double*)((char*)new_data + j * new_typeInfo->size)) != 1) {
+                                printf("Invalid input. Try again: ");
+                                while (getchar() != '\n');
+                            }
+                            break;
+                        case 2: {
+                            Complex* z = (Complex*)((char*)new_data + j * new_typeInfo->size);
+                            while (scanf("%lf %lf", &z->real, &z->imag) != 2) {
+                                printf("Invalid complex input. Try again: ");
+                                while (getchar() != '\n');
+                            }
+                            break;
+                        }
+                        case 3:
+                            while (scanf("%d", (int*)((char*)new_data + j * new_typeInfo->size)) != 1) {
+                                printf("Invalid input. Try again: ");
+                                while (getchar() != '\n');
+                            }
+                            break;
+                    }
+                }
+
+                if (errors_handler(rewrite_vector(new_typeInfo, vector_list->items[index1], new_size, new_data))) {
+                    break;
+                }
+
+                free(new_data);
+                printf("Vector modified.\n");
+                break;
+            }
+
+            case 6: { // Add vector
+                int data_type;
+                printf("Choose data type:\n1 - Double\n2 - Complex\n3 - Integer\n");
+                while (scanf("%d", &data_type) != 1 || data_type < 1 || data_type > 3) {
+                    printf("Invalid choice. Try again: ");
+                    while (getchar() != '\n');
+                }
+
+                TypeInfo* type_info = NULL;
+                if (data_type == 1) type_info = GetDoubleTypeInfo();
+                else if (data_type == 2) type_info = GetComplexTypeInfo();
+                else type_info = GetIntTypeInfo();
+
+                int size;
+                printf("Enter vector size: ");
+                while (scanf("%d", &size) != 1 || size <= 0) {
+                    printf("Invalid input. Try again: ");
+                    while (getchar() != '\n');
+                }
+
+                void* data = malloc(size * type_info->size);
+                printf("Enter coordinates (%s):\n", (data_type == 2) ? "real imag pairs" : "one per element");
+
+                for (int j = 0; j < size; j++) {
+                    switch (data_type) {
+                        case 1:
+                            while (scanf("%lf", (double*)((char*)data + j * type_info->size)) != 1) {
+                                printf("Invalid input. Try again: ");
+                                while (getchar() != '\n');
+                            }
+                            break;
+                        case 2: {
+                            Complex* z = (Complex*)((char*)data + j * type_info->size);
+                            while (scanf("%lf %lf", &z->real, &z->imag) != 2) {
+                                printf("Invalid input. Try again: ");
+                                while (getchar() != '\n');
+                            }
+                            break;
+                        }
+                        case 3:
+                            while (scanf("%d", (int*)((char*)data + j * type_info->size)) != 1) {
+                                printf("Invalid input. Try again: ");
+                                while (getchar() != '\n');
+                            }
+                            break;
+                    }
+                }
+
+                Vector* new_vector = createVector(type_info, data, size, &operation_result);
+                if (errors_handler(operation_result)) break;
+                push_vector(vector_list, new_vector);
+                printf("Vector added successfully.\n");
+                break;
+            }
+
+            case 7: { // Remove vector
+                if (vector_list->size == 0) {
+                    printf("No vectors to remove.\n");
+                    break;
+                }
+
+                printf("Enter index of vector to remove (1 to %u): ", vector_list->size);
+                while (scanf("%u", &index1) != 1 || index1 < 1 || index1 > vector_list->size) {
+                    printf("Invalid input. Try again: ");
+                    while (getchar() != '\n');
+                }
+
+                remove_vector(vector_list, index1 - 1);
+                printf("Vector removed.\n");
+                break;
+            }
+
+            case 8: // Exit
+                printf("Goodbye!\n");
+                for (unsigned int i = 0; i < vector_list->size; i++) {
+                    free_vector(vector_list->items[i]);
+                }
+                free(vector_list->items);
+                free(vector_list);
+                return;
+        }
     }
-    free(vectors);
 }

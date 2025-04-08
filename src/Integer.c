@@ -14,11 +14,11 @@ void intPrint(const void* data) {
     printf("%d", *(const int*)data);
 }
 
-void intModule(const void* arg, void* result){
+void intabs(const void* arg, void* result){
     int* i1 = (int*)arg;
-    double* moduleResult = (double*)result;
+    double* absResult = (double*)result;
 
-    *moduleResult += (*i1) * (*i1);
+    *absResult += (*i1) * (*i1);
 }
 
 TypeInfo* GetIntTypeInfo() {
@@ -29,7 +29,7 @@ TypeInfo* GetIntTypeInfo() {
         INT_TYPE_INFO->add = intAdd;
         INT_TYPE_INFO->multiply = intMultiply;
         INT_TYPE_INFO->print = intPrint;
-        INT_TYPE_INFO->module = intModule;
+        INT_TYPE_INFO->abs = intabs;
     }
     return INT_TYPE_INFO;
 }

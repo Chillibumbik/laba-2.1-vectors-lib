@@ -11,16 +11,16 @@
 typedef struct {
     void **data;
     TypeInfo* typeInfo;   
-    int capacity;
+    int size;
 } Vector;
 
 
-Vector* createVector(TypeInfo* typeInfo, void *data, int capacity, VectorErrors* operationResult);
+Vector* createVector(TypeInfo* typeInfo, void *data, int size, VectorErrors* operationResult);
 void free_vector(Vector* v);
 VectorErrors add_vectors(const Vector* v1, const Vector* v2, Vector* result);
 VectorErrors multiply_vectors(const Vector* v1, const Vector* v2, void* result);
 VectorErrors print_vector(const Vector* v);
-VectorErrors find_module(const Vector* v, void* result);
-VectorErrors rewrite_vector(TypeInfo* new_typeInfo, Vector *v, int new_capacity, void *new_data);
+VectorErrors find_abs(const Vector* v, void* result);
+VectorErrors rewrite_vector(TypeInfo* new_typeInfo, Vector *v, int new_size, void *new_data);
 
 #endif

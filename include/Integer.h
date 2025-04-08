@@ -8,7 +8,7 @@ static TypeInfo* INT_TYPE_INFO = NULL;
 void intAdd(const void* arg1, const void* arg2, void* result);
 void intMultiply(const void* arg1, const void* arg2, void* result);
 void intPrint(const void* data);
-void intModule(const void* arg, void* result);
+void intabs(const void* arg, void* result);
 TypeInfo* GetIntTypeInfo();
 
 #endif 
